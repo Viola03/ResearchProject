@@ -101,8 +101,23 @@ def compute_angle(df, mother, particle, true_vars=True):
                 df[f"{particle}_PZ"],
             ]
         )
+        
+    epsilon = 1e-10  # Small number to prevent division by zero
 
-    dot_prod = np.arccos(dot(momenta_B, momenta_i) / (mag(momenta_B) * mag(momenta_i)))
+    # Compute magnitudes
+    mag_B = mag(momenta_B)
+    mag_i = mag(momenta_i)
+
+    # Avoid division by zero
+    denominator = np.maximum(mag_B * mag_i, epsilon)
+
+    # Compute dot product safely
+    cos_theta = np.clip(dot(momenta_B, momenta_i) / denominator, -1.0, 1.0)
+
+    # Compute angle
+    dot_prod = np.arccos(cos_theta)
+
+    #dot_prod = np.arccos(dot(momenta_B, momenta_i) / (mag(momenta_B) * mag(momenta_i)))
 
     dot_prod[np.where(np.isnan(dot_prod))] = 1e-6
     dot_prod[np.where(dot_prod == 0)] = 1e-6

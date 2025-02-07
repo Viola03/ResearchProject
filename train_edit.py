@@ -1,7 +1,20 @@
-
 from fast_vertex_quality.tools.config import read_definition, rd
 
 import tensorflow as tf
+
+
+# Check TensorFlow version
+print(f"TensorFlow version: {tf.__version__}")
+
+# Check if TensorFlow can access GPUs
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    print(f"Number of GPUs detected: {len(gpus)}")
+    for i, gpu in enumerate(gpus):
+        print(f"GPU {i}: {gpu}")
+else:
+    print("No GPU detected. TensorFlow is running on CPU.")
+
 
 from fast_vertex_quality.training_schemes.track_chi2 import trackchi2_trainer
 from fast_vertex_quality.training_schemes.vertex_quality import vertex_quality_trainer
@@ -25,18 +38,31 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 
 ### Directory setup to save model ###
 
+# test_tag = 'NewConditions_mini'
+
+# test_loc = f'test_runs_branches/{test_tag}/'
+# try:
+# 	os.mkdir(f'{test_loc}')
+# 	os.mkdir(f'{test_loc}/networks')
+# except:
+# 	print(f"{test_loc} will be overwritten")
+# rd.test_loc = test_loc
+
+# rd.network_option = 'VAE'
+# load_state = f"{test_loc}/networks/{test_tag}"
+
 test_tag = 'NewConditions_mini'
-
 test_loc = f'test_runs_branches/{test_tag}/'
-try:
-	os.mkdir(f'{test_loc}')
-	os.mkdir(f'{test_loc}/networks')
-except:
-	print(f"{test_loc} will be overwritten")
-rd.test_loc = test_loc
 
+# Ensure all directories exist before proceeding
+os.makedirs(test_loc, exist_ok=True)
+os.makedirs(f'{test_loc}/networks', exist_ok=True)
+
+rd.test_loc = test_loc
 rd.network_option = 'VAE'
 load_state = f"{test_loc}/networks/{test_tag}"
+
+print(f"Directories ensured: {test_loc} and {test_loc}/networks")
 
 
 ### Network Configuration ###
@@ -57,55 +83,125 @@ rd.batch_size = 256
 
 # Modified
 
+# rd.conditions = [
+# # Recomputed
+# 	"B_plus_P",
+# 	"B_plus_PT",
+# 	"angle_K_Kst",
+# 	"angle_e_plus",
+# 	"angle_e_minus",
+# 	"K_Kst_eta",
+# 	"e_plus_eta",
+# 	"e_minus_eta",
+ 
+# # Recomputed 
+# 	"IP_B_plus_true_vertex",
+# 	"IP_K_Kst_true_vertex",
+# 	"IP_e_plus_true_vertex",
+# 	"IP_e_minus_true_vertex",
+# 	# "FD_B_plus_true_vertex", 
+# 	"DIRA_B_plus_true_vertex",
+
+#  # Rm
+# 	# "missing_B_plus_P",
+# 	# "missing_B_plus_PT",
+# 	# "missing_J_psi_1S_P",
+# 	# "missing_J_psi_1S_PT",
+ 
+#  # Recomputed from pv
+ 
+# 	"K_Kst_FLIGHT",
+# 	"e_plus_FLIGHT",
+# 	"e_minus_FLIGHT",
+ 
+#  # Note: delta 0 is daughter 1 etc., Diff between reconstructed and true momenta
+# 	"delta_0_P",
+# 	"delta_0_PT",
+# 	"delta_1_P",
+# 	"delta_1_PT",
+# 	"delta_2_P",
+# 	"delta_2_PT",
+ 
+# 	"K_Kst_TRUEID",
+# 	"e_plus_TRUEID",
+# 	"e_minus_TRUEID",
+ 
+#  # Rm
+# 	# "B_plus_nPositive_missing",
+# 	# "B_plus_nNegative_missing",
+#  # Rm
+# 	# "fully_reco",
+# 	# "missing_mass_frac", # this varaible is badly formmated, somehow it is ruining performance - INVESTIGATE
+# ]
+
+# rd.targets = [
+# 	"B_plus_ENDVERTEX_CHI2",
+# 	"B_plus_IPCHI2_OWNPV",
+# 	"B_plus_FDCHI2_OWNPV",
+# 	"B_plus_DIRA_OWNPV",
+# 	"K_Kst_IPCHI2_OWNPV",
+# 	"K_Kst_TRACK_CHI2NDOF",
+# 	"e_minus_IPCHI2_OWNPV",
+# 	"e_minus_TRACK_CHI2NDOF",
+# 	"e_plus_IPCHI2_OWNPV",
+# 	"e_plus_TRACK_CHI2NDOF",
+# 	"J_psi_1S_FDCHI2_OWNPV",
+# 	"J_psi_1S_IPCHI2_OWNPV",
+# 	# # new targets
+# 	"J_psi_1S_ENDVERTEX_CHI2",
+# 	"J_psi_1S_DIRA_OWNPV",
+# 	# # VertexIsoBDTInfo:
+# 	"B_plus_VTXISOBDTHARDFIRSTVALUE",
+# 	"B_plus_VTXISOBDTHARDSECONDVALUE",
+# 	"B_plus_VTXISOBDTHARDTHIRDVALUE",
+# 	# # TupleToolVtxIsoln:
+# 	# "B_plus_SmallestDeltaChi2OneTrack",
+# 	# "B_plus_SmallestDeltaChi2TwoTracks",
+# 	# # TupleToolTrackIsolation:
+# 	# # "B_plus_cp_0.70",
+# 	# # "B_plus_cpt_0.70",
+# 	# # "B_plus_cmult_0.70",
+# 	# # Ghost:
+# 	"e_plus_TRACK_GhostProb",
+# 	"e_minus_TRACK_GhostProb",
+# 	"K_Kst_TRACK_GhostProb",
+# ]
+
+
 rd.conditions = [
-# Recomputed
 	"B_plus_P",
 	"B_plus_PT",
-	"angle_K_Kst",
+ 
+	"angle_K_plus",
 	"angle_e_plus",
 	"angle_e_minus",
-	"K_Kst_eta",
-	"e_plus_eta",
-	"e_minus_eta",
  
-# Recomputed 
-	"IP_B_plus_true_vertex",
-	"IP_K_Kst_true_vertex",
-	"IP_e_plus_true_vertex",
-	"IP_e_minus_true_vertex",
-	# "FD_B_plus_true_vertex", 
-	"DIRA_B_plus_true_vertex",
-
- # Rm
-	# "missing_B_plus_P",
-	# "missing_B_plus_PT",
-	# "missing_J_psi_1S_P",
-	# "missing_J_psi_1S_PT",
- 
- # Recomputed from pv
- 
-	"K_Kst_FLIGHT",
+	"K_plus_FLIGHT",
 	"e_plus_FLIGHT",
 	"e_minus_FLIGHT",
  
- # Note: delta 0 is daughter 1 etc., Diff between reconstructed and true momenta
-	"delta_0_P",
-	"delta_0_PT",
-	"delta_1_P",
-	"delta_1_PT",
-	"delta_2_P",
-	"delta_2_PT",
- 
-	"K_Kst_TRUEID",
+	# "B_plus_TRUEID"
+	"K_plus_TRUEID",
 	"e_plus_TRUEID",
 	"e_minus_TRUEID",
  
- # Rm
-	# "B_plus_nPositive_missing",
-	# "B_plus_nNegative_missing",
- # Rm
-	# "fully_reco",
-	# "missing_mass_frac", # this varaible is badly formmated, somehow it is ruining performance - INVESTIGATE
+	# Orig vertex to be smeared if wanted (?)	
+ 
+ 	"B_plus_vtxX_TRUE",
+	"B_plus_vtxY_TRUE",
+	"B_plus_vtxZ_TRUE",
+ 
+	"K_plus_vtxX_TRUE",
+	"K_plus_vtxY_TRUE",
+	"K_plus_vtxZ_TRUE",
+ 
+	"e_plus_vtxX_TRUE",
+	"e_plus_vtxY_TRUE",
+	"e_plus_vtxZ_TRUE",
+ 
+	"e_minus_vtxX_TRUE",
+	"e_minus_vtxY_TRUE",
+	"e_minus_vtxZ_TRUE",
 ]
 
 rd.targets = [
@@ -113,37 +209,19 @@ rd.targets = [
 	"B_plus_IPCHI2_OWNPV",
 	"B_plus_FDCHI2_OWNPV",
 	"B_plus_DIRA_OWNPV",
-	"K_Kst_IPCHI2_OWNPV",
-	"K_Kst_TRACK_CHI2NDOF",
+	"K_plus_IPCHI2_OWNPV",
+	"K_plus_TRACK_CHI2NDOF",
 	"e_minus_IPCHI2_OWNPV",
 	"e_minus_TRACK_CHI2NDOF",
 	"e_plus_IPCHI2_OWNPV",
 	"e_plus_TRACK_CHI2NDOF",
 	"J_psi_1S_FDCHI2_OWNPV",
 	"J_psi_1S_IPCHI2_OWNPV",
-	# # new targets
-	"J_psi_1S_ENDVERTEX_CHI2",
-	"J_psi_1S_DIRA_OWNPV",
-	# # VertexIsoBDTInfo:
-	"B_plus_VTXISOBDTHARDFIRSTVALUE",
-	"B_plus_VTXISOBDTHARDSECONDVALUE",
-	"B_plus_VTXISOBDTHARDTHIRDVALUE",
-	# # TupleToolVtxIsoln:
-	# "B_plus_SmallestDeltaChi2OneTrack",
-	# "B_plus_SmallestDeltaChi2TwoTracks",
-	# # TupleToolTrackIsolation:
-	# # "B_plus_cp_0.70",
-	# # "B_plus_cpt_0.70",
-	# # "B_plus_cmult_0.70",
-	# # Ghost:
-	"e_plus_TRACK_GhostProb",
-	"e_minus_TRACK_GhostProb",
-	"K_Kst_TRACK_GhostProb",
 ]
 
 rd.conditional_targets = []
 
-rd.daughter_particles = ["K_Kst", "e_plus", "e_minus"] # K e e
+rd.daughter_particles = ["K_plus", "e_plus", "e_minus"] # K e e
 rd.mother_particle = 'B_plus'
 rd.intermediate_particle = 'J_psi_1S'
 
@@ -152,11 +230,13 @@ rd.intermediate_particle = 'J_psi_1S'
 print(f"Loading data...")
 training_data_loader = data_loader.load_data(
 	[
-		"datasets/general_sample_chargeCounters_cut_more_vars.root",
+		#"datasets/general_sample_chargeCounters_cut_more_vars.root",
+		#"/users/zw21147/ResearchProject/datasets_mixed/mixed_Kee_newconditions.root",
+		"/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root",
 		
 	],
 	convert_to_RK_branch_names=True,
-	conversions={'MOTHER':'B_plus', 'DAUGHTER1':'K_Kst', 'DAUGHTER2':'e_plus', 'DAUGHTER3':'e_minus', 'INTERMEDIATE':'J_psi_1S'},
+	conversions={'MOTHER':'B_plus', 'DAUGHTER1':'K_plus', 'DAUGHTER2':'e_plus', 'DAUGHTER3':'e_minus', 'INTERMEDIATE':'J_psi_1S'},
 	# testing_frac=0.1
 	testing_frac=0.1/20. * 2.
 )
@@ -169,7 +249,11 @@ print(training_data_loader.shape())
 
 # training_data_loader.reweight_for_training("fully_reco", weight_value=1., plot_variable='B_plus_M')
 # training_data_loader.reweight_for_training("fully_reco", weight_value=50., plot_variable='B_plus_M')
-training_data_loader.reweight_for_training("fully_reco", weight_value=100., plot_variable='B_plus_M')
+
+
+# Commented out as no fully_reco available for mixed dataset, is it necessary for a combinatorial approach?
+#training_data_loader.reweight_for_training("fully_reco", weight_value=100., plot_variable='B_plus_M')
+
 
 print(f"Creating vertex_quality_trainer...")
 
@@ -343,3 +427,4 @@ for i in range(int(1E30)):
 	plt.plot(ROC_collect[:,1])
 	plt.savefig(f'{test_loc}Progress_ROC_{rd.network_option}')
 	plt.close('all')
+
