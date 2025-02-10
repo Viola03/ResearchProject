@@ -51,7 +51,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'NewConditions_mini'
+test_tag = 'NewConditions_1'
 test_loc = f'test_runs_branches/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -63,6 +63,12 @@ rd.network_option = 'VAE'
 load_state = f"{test_loc}/networks/{test_tag}"
 
 print(f"Directories ensured: {test_loc} and {test_loc}/networks")
+
+# Create a dedicated directory for input distributions
+input_dist_dir = os.path.join(test_loc, "input_distributions")
+os.makedirs(input_dist_dir, exist_ok=True)
+
+print(f"Input distributions will be saved in: {input_dist_dir}")
 
 
 ### Network Configuration ###
@@ -187,6 +193,7 @@ rd.conditions = [
  
 	# Orig vertex to be smeared if wanted (?)	
  
+	# Resample from removed 0 
  	"B_plus_vtxX_TRUE",
 	"B_plus_vtxY_TRUE",
 	"B_plus_vtxZ_TRUE",
@@ -283,6 +290,18 @@ vertex_quality_trainer_obj = vertex_quality_trainer(
 	G_architecture=rd.G_architecture,
 	network_option=rd.network_option,
 )
+
+### DEBUGGING ###
+
+#Trained weights loaded
+vertex_quality_trainer_obj.load_state(tag=load_state)
+
+#Plot
+vertex_quality_trainer_obj.make_plots(filename=f'plots_1.pdf', testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root"])
+
+quit()
+
+###
 
 
 def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last_BDT_distributions=None, tag='', weight=True):
@@ -391,6 +410,28 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 	print(ROC_AUC_SCORE_curr)
 	return ROC_AUC_SCORE_curr, last_BDT_distributions
 
+# def save_input_distributions(training_data_loader, iteration):
+#     """
+#     Function to save input distributions to the specified directory.
+#     """
+#     input_data = training_data_loader.get_branches(rd.conditions, processed=True, option='testing')
+
+#     for feature in rd.conditions:
+#         plt.figure()
+#         plt.hist(input_data[feature], bins=50, alpha=0.7, color='blue', edgecolor='black', density=True)
+#         plt.xlabel(feature)
+#         plt.ylabel("Density")
+#         plt.title(f"Input Distribution: {feature}")
+
+#         save_path = os.path.join(input_dist_dir, f"{feature}_iter_{iteration}.png")
+#         plt.savefig(save_path, bbox_inches='tight')
+#         plt.close()
+
+#     print(f"Saved input distributions for iteration {iteration}")
+
+# save_input_distributions(training_data_loader, iteration=0)
+
+
 ### Training / Testing / Saving ###
 
 steps_for_plot = 5000 # number of training iterations between plots/checkpoints
@@ -422,7 +463,11 @@ for i in range(int(1E30)):
 	ROC_AUC_SCORE_curr, last_BDT_distributions = test_with_ROC(training_data_loader, vertex_quality_trainer_obj, i+1, last_BDT_distributions=last_BDT_distributions)
 	ROC_collect = np.append(ROC_collect, [[i+1, ROC_AUC_SCORE_curr]], axis=0)
 
+	# Save actual inputs going into the VAE
+	vertex_quality_trainer_obj.save_vae_input_distributions(iteration=i+1, save_dir=os.path.join(test_loc, "input_distributions"))
+ 
 	vertex_quality_trainer_obj.save_state(tag=load_state)
+	# New plotting functions
 
 	plt.plot(ROC_collect[:,1])
 	plt.savefig(f'{test_loc}Progress_ROC_{rd.network_option}')

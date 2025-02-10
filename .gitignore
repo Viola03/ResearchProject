@@ -1,4 +1,3 @@
-*.png
 notebooks/
 *.ipynb
 __pycache__/

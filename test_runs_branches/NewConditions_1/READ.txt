@@ -1,0 +1,2 @@
+Trained ~30mins on full primary vertex - incorrect need to resample
+Plots made at final state in debug stage
