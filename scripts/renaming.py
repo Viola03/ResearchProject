@@ -111,7 +111,6 @@ def renamed(file_name):
     converted_columns = {col: convert_series(data[col]) for col in data.columns}
     
     # Write the converted data to a new ROOT file.
-    # Uproot will now see only plain lists (or numpy arrays if possible)
     output_file_path = file_name.replace(".root", "_renamed.root")
     with uproot.recreate(output_file_path) as fout:
         fout["DecayTree"] = converted_columns
@@ -119,6 +118,5 @@ def renamed(file_name):
     print("Wrote renamed tree to", output_file_path)
     return output_file_path
 
-# Example usage:
 if __name__ == "__main__":
     renamed("/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu.root")
