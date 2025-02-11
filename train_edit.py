@@ -53,7 +53,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'NewConditions_latest'
+test_tag = 'NewConditions_gpudebug'
 test_loc = f'test_runs_branches/{test_tag}/'
 
 # Ensure all directories exist before proceeding
