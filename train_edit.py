@@ -51,7 +51,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'NewConditions_1'
+test_tag = 'NewConditions_with_plots'
 test_loc = f'test_runs_branches/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -68,7 +68,7 @@ print(f"Directories ensured: {test_loc} and {test_loc}/networks")
 input_dist_dir = os.path.join(test_loc, "input_distributions")
 os.makedirs(input_dist_dir, exist_ok=True)
 
-print(f"Input distributions will be saved in: {input_dist_dir}")
+#print(f"Input distributions will be saved in: {input_dist_dir}")
 
 
 ### Network Configuration ###
@@ -81,6 +81,17 @@ rd.latent = 10 # VAE latent dims
 # 2 layers of 250 to start
 rd.D_architecture=[250]
 rd.G_architecture=[250]
+
+# Experiment with:
+# Multiple layers
+# rd.D_architecture = [512, 1024, 512]  
+# rd.G_architecture = [512, 1024, 512]
+
+# # Different layer sizes
+# rd.D_architecture = [256, 512, 512, 256]
+# rd.G_architecture = [256, 512, 512, 256]
+
+
 
 rd.beta = 1000.
 
@@ -239,7 +250,7 @@ training_data_loader = data_loader.load_data(
 	[
 		#"datasets/general_sample_chargeCounters_cut_more_vars.root",
 		#"/users/zw21147/ResearchProject/datasets_mixed/mixed_Kee_newconditions.root",
-		"/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root",
+		"/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root",
 		
 	],
 	convert_to_RK_branch_names=True,
@@ -291,13 +302,14 @@ vertex_quality_trainer_obj = vertex_quality_trainer(
 	network_option=rd.network_option,
 )
 
-### DEBUGGING ###
+### DEBUGGING PLOTS ###
 
 #Trained weights loaded
 vertex_quality_trainer_obj.load_state(tag=load_state)
 
-#Plot
-vertex_quality_trainer_obj.make_plots(filename=f'plots_1.pdf', testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root"])
+#Plot (script changed in fast_vertex_quality -> src -> training_schemes -> vertex_quality.py)
+vertex_quality_trainer_obj.make_plots(filename=f'plots.pdf', testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root"])
+print('Plots made')
 
 quit()
 
@@ -466,8 +478,11 @@ for i in range(int(1E30)):
 	# Save actual inputs going into the VAE
 	vertex_quality_trainer_obj.save_vae_input_distributions(iteration=i+1, save_dir=os.path.join(test_loc, "input_distributions"))
  
+	# Save the state of the network 
 	vertex_quality_trainer_obj.save_state(tag=load_state)
-	# New plotting functions
+ 
+	# New plotting functions (Do I need to load state before?)
+	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
 
 	plt.plot(ROC_collect[:,1])
 	plt.savefig(f'{test_loc}Progress_ROC_{rd.network_option}')
