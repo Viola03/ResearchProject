@@ -1,0 +1,2 @@
+Trained ~2h 20m on cpu
+2 hidden layers 250

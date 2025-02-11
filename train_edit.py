@@ -1,7 +1,8 @@
 from fast_vertex_quality.tools.config import read_definition, rd
 
+### GPU test ###
 import tensorflow as tf
-
+import time
 
 # Check TensorFlow version
 print(f"TensorFlow version: {tf.__version__}")
@@ -14,6 +15,7 @@ if gpus:
         print(f"GPU {i}: {gpu}")
 else:
     print("No GPU detected. TensorFlow is running on CPU.")
+###
 
 
 from fast_vertex_quality.training_schemes.track_chi2 import trackchi2_trainer
@@ -51,7 +53,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'NewConditions_with_plots'
+test_tag = 'NewConditions_latest'
 test_loc = f'test_runs_branches/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -305,15 +307,15 @@ vertex_quality_trainer_obj = vertex_quality_trainer(
 ### DEBUGGING PLOTS ###
 
 #Trained weights loaded
-vertex_quality_trainer_obj.load_state(tag=load_state)
+# vertex_quality_trainer_obj.load_state(tag=load_state)
 
-#Plot (script changed in fast_vertex_quality -> src -> training_schemes -> vertex_quality.py)
-vertex_quality_trainer_obj.make_plots(filename=f'plots.pdf', testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root"])
-print('Plots made')
+# #Plot (script changed in fast_vertex_quality -> src -> training_schemes -> vertex_quality.py)
+# vertex_quality_trainer_obj.make_plots(filename=f'plots.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed.root"])
+# print('Plots made')
 
-quit()
+# quit()
 
-###
+# ###
 
 
 def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last_BDT_distributions=None, tag='', weight=True):
@@ -463,26 +465,35 @@ vertex_quality_trainer_obj.save_state(tag=load_state)
 ROC_AUC_SCORE_curr, last_BDT_distributions = test_with_ROC(training_data_loader, vertex_quality_trainer_obj, 0)
 ROC_collect = np.append(ROC_collect, [[0, ROC_AUC_SCORE_curr]], axis=0)
 
+start_time = time.time()  # Record the start time
 
 # Infinite training, creates and outputs progress plots
 for i in range(int(1E30)):
 
 	vertex_quality_trainer_obj.train_more_steps(steps=steps_for_plot)
 
-	# # the testing file here was just a smaller version of the training sample for a quick judge of performance
-	# vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf',testing_file=["datasets/general_sample_chargeCounters_cut_more_vars_HEADfactor20.root"])
-
+	### Elapsed time ###
+	elapsed_time = time.time() - start_time
+	hours = int(elapsed_time // 3600)
+	minutes = int((elapsed_time % 3600) // 60)
+	seconds = int(elapsed_time % 60)
+	print(f"Elapsed time: {hours}h {minutes}m {seconds}s")
+	###
+	
 	ROC_AUC_SCORE_curr, last_BDT_distributions = test_with_ROC(training_data_loader, vertex_quality_trainer_obj, i+1, last_BDT_distributions=last_BDT_distributions)
 	ROC_collect = np.append(ROC_collect, [[i+1, ROC_AUC_SCORE_curr]], axis=0)
 
 	# Save actual inputs going into the VAE
-	vertex_quality_trainer_obj.save_vae_input_distributions(iteration=i+1, save_dir=os.path.join(test_loc, "input_distributions"))
+	# vertex_quality_trainer_obj.save_vae_input_distributions(iteration=i+1, save_dir=os.path.join(test_loc, "input_distributions"))
  
 	# Save the state of the network 
 	vertex_quality_trainer_obj.save_state(tag=load_state)
  
-	# New plotting functions (Do I need to load state before?)
-	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
+	# New plotting functions 
+	print('Loading and plotting...')
+	vertex_quality_trainer_obj.load_state(tag=load_state)
+	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
+	print('Plots made')
 
 	plt.plot(ROC_collect[:,1])
 	plt.savefig(f'{test_loc}Progress_ROC_{rd.network_option}')
