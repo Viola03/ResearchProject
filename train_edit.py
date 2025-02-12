@@ -53,8 +53,8 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'NewConditions_gpudebug'
-test_loc = f'test_runs_branches/{test_tag}/'
+test_tag = 'Run2'
+test_loc = f'test_runs_expanded/{test_tag}/'
 
 # Ensure all directories exist before proceeding
 os.makedirs(test_loc, exist_ok=True)
@@ -77,12 +77,12 @@ os.makedirs(input_dist_dir, exist_ok=True)
 
 rd.latent = 10 # VAE latent dims
 
-# rd.D_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
-# rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
+rd.D_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
+rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
 
 # 2 layers of 250 to start
-rd.D_architecture=[250]
-rd.G_architecture=[250]
+# rd.D_architecture=[250]
+# rd.G_architecture=[250]
 
 # Experiment with:
 # Multiple layers
@@ -280,12 +280,12 @@ print(f"Creating vertex_quality_trainer...")
 trackchi2_trainer_obj = None
 
 
-# training_data_loader.print_branches()
+training_data_loader.print_branches()
 
-# print("plot conditions...")
-# training_data_loader.plot('conditions.pdf',rd.conditions)
-# print("plot targets...")
-# training_data_loader.plot('targets.pdf',rd.targets)
+print("Plot conditions...")
+training_data_loader.plot('conditions.pdf',rd.conditions)
+print("Plot targets...")
+training_data_loader.plot('targets.pdf',rd.targets)
 # quit()
 
 
