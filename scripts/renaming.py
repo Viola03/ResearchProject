@@ -9,13 +9,10 @@ def renamed(file_name):
     particles = ["DAUGHTER1", "DAUGHTER2", "DAUGHTER3"]
     mother = "MOTHER"
     
-    # Open the original tree with uproot
     tree = uproot.open(file_name)["DecayTree"]
-    
-    # Get the list of branch names
     branches = list(tree.keys())
     
-    # Define a function that applies your renaming rules
+    # Define a function that applies renaming rules
     def rename_branch(branch):
         new = branch
         if "TRUEENDVERTEX_X" in new:
@@ -110,7 +107,7 @@ def renamed(file_name):
     # Convert all columns; the resulting dictionary has only Python objects
     converted_columns = {col: convert_series(data[col]) for col in data.columns}
     
-    # Write the converted data to a new ROOT file.
+    # write the converted data to a new ROOT file.
     output_file_path = file_name.replace(".root", "_renamed.root")
     with uproot.recreate(output_file_path) as fout:
         fout["DecayTree"] = converted_columns

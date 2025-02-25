@@ -53,7 +53,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'Run2'
+test_tag = 'Run3_with_inverse'
 test_loc = f'test_runs_expanded/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -493,6 +493,7 @@ for i in range(int(1E30)):
 	print('Loading and plotting...')
 	vertex_quality_trainer_obj.load_state(tag=load_state)
 	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
+	vertex_quality_trainer_obj.make_inverse_plots(filename=f'inverse_plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
 	print('Plots made')
 
 	plt.plot(ROC_collect[:,1])
