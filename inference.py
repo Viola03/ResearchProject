@@ -1,6 +1,7 @@
 from fast_vertex_quality_inference.processing.data_manager import tuple_manager
 from fast_vertex_quality_inference.processing.network_manager import network_manager
 import numpy as np
+import uproot
 
 # config.verbose = True
 
@@ -56,7 +57,7 @@ vertexing_encoder = network_manager(
 # 					)
 
 data_tuple = tuple_manager(
-					tuple_location="datasets_mixed/mixed_Kee_2.root",
+					tuple_location="datasets_mixed/full_mixed_Kee.root",
 					particles_TRUEID=[321, 11, 11],
 					fully_reco=1,
 					nPositive_missing_particles=0,
@@ -66,6 +67,7 @@ data_tuple = tuple_manager(
 					daughter_particle_names=["K_plus","e_plus","e_minus"],
 					)
 
+## Replaced tuple_manager with pre-run rapidsimdata.py script for better debug control
 
 #### 
 # SMEAR PV

@@ -159,7 +159,7 @@ def process_events(tree, suffix="_TRUE"):
     return mixed_events
 
 # Process true and non-true events
-filename = "/home/violam/RapidSimConfigs/Kmumu/Kmumu_tree.root"
+filename = "/users/zw21147/ResearchProject/rapidsim/Kee/kee_tree.root"
 file = uproot.open(filename)
 tree = file["DecayTree"] 
 
@@ -168,7 +168,7 @@ mixed_events = process_events(tree,suffix="")
 # Concatenate the true and non-true mixed events
 mixed_events = pd.concat([mixed_events_true, mixed_events], axis=1) #, ignore_index=True
 # Save the mixed events to a ROOT file
-output_file_path = "fast_vtx/datasets_mixed/mixed_kmumu.root"
+output_file_path = "/users/zw21147/ResearchProject/datasets_mixed/full_mixed_Kee.root"
 
 data_dict = {col: mixed_events[col].values for col in mixed_events.columns}
 
