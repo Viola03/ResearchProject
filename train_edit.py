@@ -53,7 +53,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'Run3_with_inverse'
+test_tag = 'Run4_with_ROC'
 test_loc = f'test_runs_expanded/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -421,8 +421,20 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 	y_scores = np.append(out_real[:, 1], out_fake[:, 1])
 	fpr, tpr, thresholds = roc_curve(y_true, y_scores)
 
+	# Plot ROC curve
+	plt.figure()
+	plt.plot(fpr, tpr, label=f'ROC curve (AUC = {ROC_AUC_SCORE_curr:.2f})', color='blue')
+	plt.plot([0, 1], [0, 1], 'k--', label='Chance level')
+	plt.xlabel('False Positive Rate')
+	plt.ylabel('True Positive Rate')
+	plt.title('Receiver Operating Characteristic (ROC) Curve')
+	plt.legend(loc='best')
+	plt.savefig(f'{test_loc}ROC_curve_{it}_{rd.network_option}{tag}.png', bbox_inches='tight')
+	plt.close()
+
 	print(ROC_AUC_SCORE_curr)
 	return ROC_AUC_SCORE_curr, last_BDT_distributions
+
 
 # def save_input_distributions(training_data_loader, iteration):
 #     """
@@ -442,7 +454,6 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 #         plt.close()
 
 #     print(f"Saved input distributions for iteration {iteration}")
-
 # save_input_distributions(training_data_loader, iteration=0)
 
 
@@ -493,7 +504,7 @@ for i in range(int(1E30)):
 	print('Loading and plotting...')
 	vertex_quality_trainer_obj.load_state(tag=load_state)
 	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
-	vertex_quality_trainer_obj.make_inverse_plots(filename=f'inverse_plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
+	# vertex_quality_trainer_obj.make_inverse_plots(filename=f'inverse_plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
 	print('Plots made')
 
 	plt.plot(ROC_collect[:,1])
