@@ -1,0 +1,4 @@
+Incorporated plots in training loop
+To add:
+- Time
+- Print statements

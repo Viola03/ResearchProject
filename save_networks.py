@@ -91,10 +91,12 @@ def organise_and_save(save_location, load_state, trainer, tag, save_encoder=Fals
     conditions = trainer_obj.conditions
     targets = trainer_obj.targets
     latent_dim = trainer_obj.latent_dim
+    
+    transformers_branches = list(transformers.keys())
 
-    transformers_branches = rapidsim_ify__branch_names(list(transformers.keys()))
-    targets = rapidsim_ify__branch_names(targets)
-    conditions = rapidsim_ify__branch_names(conditions)
+    #transformers_branches = rapidsim_ify__branch_names(list(transformers.keys()))
+    #targets = rapidsim_ify__branch_names(targets)
+    #conditions = rapidsim_ify__branch_names(conditions)
 
     transformers = {transformers_branches[i]: value for i, (key, value) in enumerate(transformers.items())}
     with open(f"{save_location}/{tag}_transfomers.pkl", 'wb') as handle:

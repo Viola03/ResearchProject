@@ -1,5 +1,0 @@
-Trained 2h 30m
-Architecture:
-rd.latent=10
-rd.D_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
-rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]

@@ -67,6 +67,10 @@ def process_events(tree, suffix="_TRUE"):
         f"K_plus_PX{suffix}",
         f"K_plus_PY{suffix}",
         f"K_plus_PZ{suffix}",
+        
+        f"K_plus_vtxX{suffix}",
+        f"K_plus_vtxY{suffix}",
+        f"K_plus_vtxZ{suffix}",
     ]
 
     e_branches = [
@@ -98,6 +102,14 @@ def process_events(tree, suffix="_TRUE"):
         f"e_minus_origX{suffix}",
         f"e_minus_origY{suffix}",
         f"e_minus_origZ{suffix}",
+        
+        f"e_plus_vtxX{suffix}",
+        f"e_plus_vtxY{suffix}",
+        f"e_plus_vtxZ{suffix}",
+        
+        f"e_minus_vtxX{suffix}",
+        f"e_minus_vtxY{suffix}",
+        f"e_minus_vtxZ{suffix}",
     ]
     
     
@@ -165,10 +177,11 @@ tree = file["DecayTree"]
 
 mixed_events_true = process_events(tree)
 mixed_events = process_events(tree,suffix="")
+
 # Concatenate the true and non-true mixed events
 mixed_events = pd.concat([mixed_events_true, mixed_events], axis=1) #, ignore_index=True
 # Save the mixed events to a ROOT file
-output_file_path = "/users/zw21147/ResearchProject/datasets_mixed/full_mixed_Kee.root"
+output_file_path = "/users/zw21147/ResearchProject/datasets_mixed/full_mixed_Kee_2.root"
 
 data_dict = {col: mixed_events[col].values for col in mixed_events.columns}
 

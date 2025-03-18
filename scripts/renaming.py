@@ -61,9 +61,6 @@ def renamed(file_name):
     print("Renamed columns...")
     
     
-    
-    
-    
     # Compute additional branches
     
     ## Compute FLIGHT distances

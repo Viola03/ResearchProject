@@ -53,8 +53,8 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'Run4_with_ROC'
-test_loc = f'test_runs_expanded/{test_tag}/'
+test_tag = 'plot_test'
+test_loc = f'model_final_runs/{test_tag}/'
 
 # Ensure all directories exist before proceeding
 os.makedirs(test_loc, exist_ok=True)
@@ -70,19 +70,18 @@ print(f"Directories ensured: {test_loc} and {test_loc}/networks")
 input_dist_dir = os.path.join(test_loc, "input_distributions")
 os.makedirs(input_dist_dir, exist_ok=True)
 
-#print(f"Input distributions will be saved in: {input_dist_dir}")
+print(f"Input distributions will be saved in: {input_dist_dir}")
 
 
 ### Network Configuration ###
 
 rd.latent = 10 # VAE latent dims
 
-rd.D_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
-rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
+# rd.D_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
+# rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
 
-# 2 layers of 250 to start
-# rd.D_architecture=[250]
-# rd.G_architecture=[250]
+rd.D_architecture = [256]  
+rd.G_architecture = [256]
 
 # Experiment with:
 # Multiple layers
@@ -93,99 +92,10 @@ rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
 # rd.D_architecture = [256, 512, 512, 256]
 # rd.G_architecture = [256, 512, 512, 256]
 
-
-
 rd.beta = 1000.
-
 rd.batch_size = 256
+
 # rd.batch_size = 64
-
-# Modified
-
-# rd.conditions = [
-# # Recomputed
-# 	"B_plus_P",
-# 	"B_plus_PT",
-# 	"angle_K_Kst",
-# 	"angle_e_plus",
-# 	"angle_e_minus",
-# 	"K_Kst_eta",
-# 	"e_plus_eta",
-# 	"e_minus_eta",
- 
-# # Recomputed 
-# 	"IP_B_plus_true_vertex",
-# 	"IP_K_Kst_true_vertex",
-# 	"IP_e_plus_true_vertex",
-# 	"IP_e_minus_true_vertex",
-# 	# "FD_B_plus_true_vertex", 
-# 	"DIRA_B_plus_true_vertex",
-
-#  # Rm
-# 	# "missing_B_plus_P",
-# 	# "missing_B_plus_PT",
-# 	# "missing_J_psi_1S_P",
-# 	# "missing_J_psi_1S_PT",
- 
-#  # Recomputed from pv
- 
-# 	"K_Kst_FLIGHT",
-# 	"e_plus_FLIGHT",
-# 	"e_minus_FLIGHT",
- 
-#  # Note: delta 0 is daughter 1 etc., Diff between reconstructed and true momenta
-# 	"delta_0_P",
-# 	"delta_0_PT",
-# 	"delta_1_P",
-# 	"delta_1_PT",
-# 	"delta_2_P",
-# 	"delta_2_PT",
- 
-# 	"K_Kst_TRUEID",
-# 	"e_plus_TRUEID",
-# 	"e_minus_TRUEID",
- 
-#  # Rm
-# 	# "B_plus_nPositive_missing",
-# 	# "B_plus_nNegative_missing",
-#  # Rm
-# 	# "fully_reco",
-# 	# "missing_mass_frac", # this varaible is badly formmated, somehow it is ruining performance - INVESTIGATE
-# ]
-
-# rd.targets = [
-# 	"B_plus_ENDVERTEX_CHI2",
-# 	"B_plus_IPCHI2_OWNPV",
-# 	"B_plus_FDCHI2_OWNPV",
-# 	"B_plus_DIRA_OWNPV",
-# 	"K_Kst_IPCHI2_OWNPV",
-# 	"K_Kst_TRACK_CHI2NDOF",
-# 	"e_minus_IPCHI2_OWNPV",
-# 	"e_minus_TRACK_CHI2NDOF",
-# 	"e_plus_IPCHI2_OWNPV",
-# 	"e_plus_TRACK_CHI2NDOF",
-# 	"J_psi_1S_FDCHI2_OWNPV",
-# 	"J_psi_1S_IPCHI2_OWNPV",
-# 	# # new targets
-# 	"J_psi_1S_ENDVERTEX_CHI2",
-# 	"J_psi_1S_DIRA_OWNPV",
-# 	# # VertexIsoBDTInfo:
-# 	"B_plus_VTXISOBDTHARDFIRSTVALUE",
-# 	"B_plus_VTXISOBDTHARDSECONDVALUE",
-# 	"B_plus_VTXISOBDTHARDTHIRDVALUE",
-# 	# # TupleToolVtxIsoln:
-# 	# "B_plus_SmallestDeltaChi2OneTrack",
-# 	# "B_plus_SmallestDeltaChi2TwoTracks",
-# 	# # TupleToolTrackIsolation:
-# 	# # "B_plus_cp_0.70",
-# 	# # "B_plus_cpt_0.70",
-# 	# # "B_plus_cmult_0.70",
-# 	# # Ghost:
-# 	"e_plus_TRACK_GhostProb",
-# 	"e_minus_TRACK_GhostProb",
-# 	"K_Kst_TRACK_GhostProb",
-# ]
-
 
 rd.conditions = [
 	"B_plus_P",
@@ -204,9 +114,7 @@ rd.conditions = [
 	"e_plus_TRUEID",
 	"e_minus_TRUEID",
  
-	# Orig vertex to be smeared if wanted (?)	
- 
-	# Resample from removed 0 
+	# Resampled from removed 0 
  	"B_plus_vtxX_TRUE",
 	"B_plus_vtxY_TRUE",
 	"B_plus_vtxZ_TRUE",
@@ -235,8 +143,8 @@ rd.targets = [
 	"e_minus_TRACK_CHI2NDOF",
 	"e_plus_IPCHI2_OWNPV",
 	"e_plus_TRACK_CHI2NDOF",
-	"J_psi_1S_FDCHI2_OWNPV",
-	"J_psi_1S_IPCHI2_OWNPV",
+	# "J_psi_1S_FDCHI2_OWNPV",
+	# "J_psi_1S_IPCHI2_OWNPV",
 ]
 
 rd.conditional_targets = []
@@ -250,7 +158,6 @@ rd.intermediate_particle = 'J_psi_1S'
 print(f"Loading data...")
 training_data_loader = data_loader.load_data(
 	[
-		#"datasets/general_sample_chargeCounters_cut_more_vars.root",
 		#"/users/zw21147/ResearchProject/datasets_mixed/mixed_Kee_newconditions.root",
 		"/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root",
 		
@@ -274,19 +181,18 @@ print(training_data_loader.shape())
 # Commented out as no fully_reco available for mixed dataset, is it necessary for a combinatorial approach?
 #training_data_loader.reweight_for_training("fully_reco", weight_value=100., plot_variable='B_plus_M')
 
-
 print(f"Creating vertex_quality_trainer...")
 
 trackchi2_trainer_obj = None
 
-
-training_data_loader.print_branches()
+#training_data_loader.print_branches()
 
 print("Plot conditions...")
 training_data_loader.plot('conditions.pdf',rd.conditions)
 print("Plot targets...")
 training_data_loader.plot('targets.pdf',rd.targets)
-# quit()
+
+quit()
 
 
 ### Network creation ###
@@ -351,11 +257,7 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 
 		gen_noise = np.random.normal(0, 1, (np.shape(X_test_conditions)[0], rd.latent))
 		images = np.asarray(vertex_quality_trainer_obj.decoder([gen_noise, X_test_conditions]))
-	elif rd.network_option == 'WGAN':
-		gen_noise = np.random.normal(0, 1, (np.shape(X_test_conditions)[0], rd.latent))
-		images = np.asarray(vertex_quality_trainer_obj.generator([gen_noise, X_test_conditions]))
-	
-	# post-processing didnt help.
+
 	images_dict = {}
 	for i in range(len(ROC_vars)):
 		images_dict[ROC_vars[i]] = images[:,i]
@@ -444,7 +346,7 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 
 #     for feature in rd.conditions:
 #         plt.figure()
-#         plt.hist(input_data[feature], bins=50, alpha=0.7, color='blue', edgecolor='black', density=True)
+#         plt.hist(input_data[feature], bins=50)
 #         plt.xlabel(feature)
 #         plt.ylabel("Density")
 #         plt.title(f"Input Distribution: {feature}")
@@ -456,6 +358,7 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 #     print(f"Saved input distributions for iteration {iteration}")
 # save_input_distributions(training_data_loader, iteration=0)
 
+# quit()
 
 ### Training / Testing / Saving ###
 

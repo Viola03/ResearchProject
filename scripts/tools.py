@@ -312,5 +312,5 @@ def compute_mass(df, i, j, mass_i, mass_j, true_vars=True):
 
     return mass, (PE**2 - PX**2 - PY**2 - PZ**2) * 1e3
 
-def resample_pv(df):
+#def resample_pv(df):
 

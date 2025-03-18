@@ -1,1 +1,0 @@
-Trained 5h 7m on gpu, marginally better results

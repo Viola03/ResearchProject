@@ -45,29 +45,28 @@ vertexing_encoder = network_manager(
 # LOAD RAPIDSIM TUPLE
 ###
 
-# data_tuple = tuple_manager(
-# 					tuple_location="datasets/combinatorial_select_Kuu_inferable_edit.root",
-# 					particles_TRUEID=[321, 11, 11],
-# 					fully_reco=1,
-# 					nPositive_missing_particles=0,
-# 					nNegative_missing_particles=0,
-# 					mother_particle_name="MOTHER",
-# 					intermediate_particle_name="J_psi",
-# 					daughter_particle_names=["DAUGHTER1","DAUGHTER2","DAUGHTER3"],
-# 					)
-
 data_tuple = tuple_manager(
-					tuple_location="datasets_mixed/full_mixed_Kee.root",
+					tuple_location="/users/zw21147/ResearchProject/datasets/split/inferencetest.root",
 					particles_TRUEID=[321, 11, 11],
 					fully_reco=1,
 					nPositive_missing_particles=0,
 					nNegative_missing_particles=0,
-					mother_particle_name="B_plus",
+					mother_particle_name="B_Plus",
 					intermediate_particle_name="J_psi",
 					daughter_particle_names=["K_plus","e_plus","e_minus"],
 					)
 
-## Replaced tuple_manager with pre-run rapidsimdata.py script for better debug control
+# data_tuple = tuple_manager(
+# 					tuple_location="datasets_mixed/full_mixed_Kee.root",
+# 					particles_TRUEID=[321, 11, 11],
+# 					fully_reco=1,
+# 					nPositive_missing_particles=0,
+# 					nNegative_missing_particles=0,
+# 					mother_particle_name="B_plus",
+# 					intermediate_particle_name="J_psi",
+# 					daughter_particle_names=["K_plus","e_plus","e_minus"],
+# 					)
+
 
 #### 
 # SMEAR PV
@@ -89,7 +88,7 @@ data_tuple = tuple_manager(
 # COMPUTE CONDITIONS AND RUN VERTEXING NETWORK
 ###
 
-data_tuple.append_conditional_information()
+#data_tuple.append_conditional_information()
 
 # missing_branches = ["missing_MOTHER_P", "missing_MOTHER_PT", "missing_INTERMEDIATE_P", "missing_INTERMEDIATE_PT"]
 # print(data_tuple.get_branches(missing_branches))
