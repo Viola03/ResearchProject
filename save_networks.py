@@ -114,11 +114,12 @@ def organise_and_save(save_location, load_state, trainer, tag, save_encoder=Fals
     print('\n\n')
 
 
-save_location = "inference/models/"
+save_location = "inference/models/baseline"
 # rapidsim_smearing_state = f"networks/primary_vertex_job_new_processing2"
 # vertex_quality_state = f"test_runs/22nf_nomissmass_deeper/networks/22nf_nomissmass_deeper"
 
-vertex_quality_state = f"test_runs_expanded/Run1/networks/Run1"
+# vertex_quality_state = f"test_runs_expanded/Run1/networks/Run1"
+vertex_quality_state = f"/users/zw21147/ResearchProject/model_final_runs/baseline/networks/baseline"
 
 # organise_and_save(save_location, rapidsim_smearing_state, primary_vertex_trainer, tag="smearing")
 

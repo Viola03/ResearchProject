@@ -53,7 +53,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'plot_test'
+test_tag = 'del'
 test_loc = f'model_final_runs/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -67,10 +67,10 @@ load_state = f"{test_loc}/networks/{test_tag}"
 print(f"Directories ensured: {test_loc} and {test_loc}/networks")
 
 # Create a dedicated directory for input distributions
-input_dist_dir = os.path.join(test_loc, "input_distributions")
-os.makedirs(input_dist_dir, exist_ok=True)
+# input_dist_dir = os.path.join(test_loc, "input_distributions")
+# os.makedirs(input_dist_dir, exist_ok=True)
 
-print(f"Input distributions will be saved in: {input_dist_dir}")
+# print(f"Input distributions will be saved in: {input_dist_dir}")
 
 
 ### Network Configuration ###
@@ -93,9 +93,44 @@ rd.G_architecture = [256]
 # rd.G_architecture = [256, 512, 512, 256]
 
 rd.beta = 1000.
-rd.batch_size = 256
+rd.batch_size = 75
 
 # rd.batch_size = 64
+
+# rd.conditions = [
+# 	"B_plus_P",
+# 	"B_plus_PT",
+ 
+# 	"angle_K_plus",
+# 	"angle_e_plus",
+# 	"angle_e_minus",
+ 
+# 	"K_plus_FLIGHT",
+# 	"e_plus_FLIGHT",
+# 	"e_minus_FLIGHT",
+ 
+# 	# "B_plus_TRUEID"
+# 	"K_plus_TRUEID",
+# 	"e_plus_TRUEID",
+# 	"e_minus_TRUEID",
+ 
+# 	# Resampled from removed 0 
+#  	"B_plus_vtxX_TRUE",
+# 	"B_plus_vtxY_TRUE",
+# 	"B_plus_vtxZ_TRUE",
+ 
+# 	"K_plus_vtxX_TRUE",
+# 	"K_plus_vtxY_TRUE",
+# 	"K_plus_vtxZ_TRUE",
+ 
+# 	"e_plus_vtxX_TRUE",
+# 	"e_plus_vtxY_TRUE",
+# 	"e_plus_vtxZ_TRUE",
+ 
+# 	"e_minus_vtxX_TRUE",
+# 	"e_minus_vtxY_TRUE",
+# 	"e_minus_vtxZ_TRUE",
+# ]
 
 rd.conditions = [
 	"B_plus_P",
@@ -104,12 +139,15 @@ rd.conditions = [
 	"angle_K_plus",
 	"angle_e_plus",
 	"angle_e_minus",
+	
+	# recompute relative to orig?
  
 	"K_plus_FLIGHT",
 	"e_plus_FLIGHT",
 	"e_minus_FLIGHT",
  
 	# "B_plus_TRUEID"
+ 
 	"K_plus_TRUEID",
 	"e_plus_TRUEID",
 	"e_minus_TRUEID",
@@ -119,17 +157,29 @@ rd.conditions = [
 	"B_plus_vtxY_TRUE",
 	"B_plus_vtxZ_TRUE",
  
-	"K_plus_vtxX_TRUE",
-	"K_plus_vtxY_TRUE",
-	"K_plus_vtxZ_TRUE",
+	"K_plus_origX_TRUE",
+	"K_plus_origY_TRUE",
+	"K_plus_origZ_TRUE",
  
-	"e_plus_vtxX_TRUE",
-	"e_plus_vtxY_TRUE",
-	"e_plus_vtxZ_TRUE",
+	"e_plus_origX_TRUE",
+	"e_plus_origY_TRUE",
+	"e_plus_origZ_TRUE",
  
-	"e_minus_vtxX_TRUE",
-	"e_minus_vtxY_TRUE",
-	"e_minus_vtxZ_TRUE",
+	"e_minus_origX_TRUE",
+	"e_minus_origY_TRUE",
+	"e_minus_origZ_TRUE",
+ 
+	# "K_plus_vtxX_TRUE",
+	# "K_plus_vtxY_TRUE",
+	# "K_plus_vtxZ_TRUE",
+ 
+	# "e_plus_vtxX_TRUE",
+	# "e_plus_vtxY_TRUE",
+	# "e_plus_vtxZ_TRUE",
+ 
+	# "e_minus_vtxX_TRUE",
+	# "e_minus_vtxY_TRUE",
+	# "e_minus_vtxZ_TRUE",
 ]
 
 rd.targets = [
@@ -158,8 +208,8 @@ rd.intermediate_particle = 'J_psi_1S'
 print(f"Loading data...")
 training_data_loader = data_loader.load_data(
 	[
-		#"/users/zw21147/ResearchProject/datasets_mixed/mixed_Kee_newconditions.root",
-		"/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root",
+		# "/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root",
+		"/users/zw21147/ResearchProject/datasets/split/train.root"
 		
 	],
 	convert_to_RK_branch_names=True,
@@ -187,12 +237,12 @@ trackchi2_trainer_obj = None
 
 #training_data_loader.print_branches()
 
-print("Plot conditions...")
-training_data_loader.plot('conditions.pdf',rd.conditions)
-print("Plot targets...")
-training_data_loader.plot('targets.pdf',rd.targets)
+# print("Plot conditions...")
+# training_data_loader.plot('conditions.pdf',rd.conditions)
+# print("Plot targets...")
+# training_data_loader.plot('targets.pdf',rd.targets)
 
-quit()
+# quit()
 
 
 ### Network creation ###
@@ -338,28 +388,6 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 	return ROC_AUC_SCORE_curr, last_BDT_distributions
 
 
-# def save_input_distributions(training_data_loader, iteration):
-#     """
-#     Function to save input distributions to the specified directory.
-#     """
-#     input_data = training_data_loader.get_branches(rd.conditions, processed=True, option='testing')
-
-#     for feature in rd.conditions:
-#         plt.figure()
-#         plt.hist(input_data[feature], bins=50)
-#         plt.xlabel(feature)
-#         plt.ylabel("Density")
-#         plt.title(f"Input Distribution: {feature}")
-
-#         save_path = os.path.join(input_dist_dir, f"{feature}_iter_{iteration}.png")
-#         plt.savefig(save_path, bbox_inches='tight')
-#         plt.close()
-
-#     print(f"Saved input distributions for iteration {iteration}")
-# save_input_distributions(training_data_loader, iteration=0)
-
-# quit()
-
 ### Training / Testing / Saving ###
 
 steps_for_plot = 5000 # number of training iterations between plots/checkpoints
@@ -381,8 +409,8 @@ ROC_collect = np.append(ROC_collect, [[0, ROC_AUC_SCORE_curr]], axis=0)
 
 start_time = time.time()  # Record the start time
 
-# Infinite training, creates and outputs progress plots
-for i in range(int(1E30)):
+# 'Infinite' training, creates and outputs progress plots
+for i in range(int(16000)):
 
 	vertex_quality_trainer_obj.train_more_steps(steps=steps_for_plot)
 
@@ -408,9 +436,18 @@ for i in range(int(1E30)):
 	vertex_quality_trainer_obj.load_state(tag=load_state)
 	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
 	# vertex_quality_trainer_obj.make_inverse_plots(filename=f'inverse_plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
-	print('Plots made')
-
+ 
+	# Formatting for progress ROC
+	plt.rcParams["font.family"] = "Times New Roman"
+ 
 	plt.plot(ROC_collect[:,1])
+	plt.title('Progress ROC')
+	plt.xlabel('NEpochs')
+	plt.ylabel('AUC Score')
+	
 	plt.savefig(f'{test_loc}Progress_ROC_{rd.network_option}')
+	
+	print('Plots made')
+ 
 	plt.close('all')
 
