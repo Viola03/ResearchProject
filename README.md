@@ -18,25 +18,26 @@ This project was initiated as part of efforts to improve simulation resources an
 
 ```plaintext
 ResearchProject/
-├── datasets/
-├── datasetsmixed/
-├── scripts/              
+├── datasets/            <-- full dataset, with splits, exploratory plots, validation
+├── datasetsmixed/       <-- RapidSim mixed dataset, with exploratory plots, validation
+├── inference/           <-- for running inference on defined dataset
+│   ├── inference.py 
+│   └── models/          <-- where .pkls are stored
+├── model_test_runs/     <-- testing gpu_training
+│   └── NewConditions_{num}/
+│       └──READ          <-- explain architecture/training time
+├── model_test_runs_expanded/  <-- more complete implementations 
+├── model_final_runs/    <-- contains baseline model
+│   └── hyperparameter_tuning
+├── scripts/     
+│   ├── validation/      <-- SignalBDT plots
 │   ├── mixing/          <-- for proxy combinatorial RapidSim samples
 │   └── various.py       <-- most tools (resampling B, renaming branches, etc.)
 ├── rapidsim/            <-- configs for rapidsim
-├── test_runs_branches/  <-- testing gpu_training
-│   └── NewConditions_{num}/
-│       └──READ          <-- explain architecture/training time
-├── test_runs_expanded/  <-- more complete implementations 
-│   ├── 
-│   └── 
-├── final_run/
-├── inference/
-│   └── models/          <-- where .pkls are stored
-├── fast_vtx.yml         <-- dependencies
+├── *.yml         <-- dependencies
 ├── train_edit.py        <-- train model
 ├── save_networks.py     <-- save model
-├── run_inference.py     <-- run inference on defined dataset
+├── Alex_inference.py    <-- old inference script for reference
 └── README.md
 ```
 

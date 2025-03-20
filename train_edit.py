@@ -53,7 +53,7 @@ rd.current_mse_raw = tf.convert_to_tensor(1.0)
 # rd.network_option = 'VAE'
 # load_state = f"{test_loc}/networks/{test_tag}"
 
-test_tag = 'del'
+test_tag = 'del2'
 test_loc = f'model_final_runs/{test_tag}/'
 
 # Ensure all directories exist before proceeding
@@ -75,13 +75,13 @@ print(f"Directories ensured: {test_loc} and {test_loc}/networks")
 
 ### Network Configuration ###
 
-rd.latent = 10 # VAE latent dims
-
-# rd.D_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
-# rd.G_architecture=[int(512*1.5),int(1024*1.5),int(1024*1.5),int(512*1.5)]
+rd.latent = 5 # VAE latent dims
 
 rd.D_architecture = [256]  
 rd.G_architecture = [256]
+
+# rd.E_architecture = [256]  
+# rd.D_architecture = [256]
 
 # Experiment with:
 # Multiple layers
@@ -93,9 +93,7 @@ rd.G_architecture = [256]
 # rd.G_architecture = [256, 512, 512, 256]
 
 rd.beta = 1000.
-rd.batch_size = 75
-
-# rd.batch_size = 64
+rd.batch_size = 256
 
 # rd.conditions = [
 # 	"B_plus_P",
@@ -273,6 +271,17 @@ vertex_quality_trainer_obj = vertex_quality_trainer(
 
 # ###
 
+### TESTING STRATEGIES ###
+
+# from scipy.stats import ks_2samp
+
+# def compute_ks_distance(real_data, generated_data):
+#     """
+#     Computes the Kolmogorov-Smirnov distance between two datasets.
+#     """
+#     ks_statistic, p_value = ks_2samp(real_data, generated_data)
+#     return ks_statistic
+
 
 def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last_BDT_distributions=None, tag='', weight=True):
 
@@ -388,15 +397,18 @@ def test_with_ROC(training_data_loader_roc, vertex_quality_trainer_obj, it, last
 	return ROC_AUC_SCORE_curr, last_BDT_distributions
 
 
+
 ### Training / Testing / Saving ###
 
-steps_for_plot = 5000 # number of training iterations between plots/checkpoints
+steps_for_plot = 2500 # number of training iterations between plots/checkpoints
 
 # Initial evaluation
 ROC_collect = np.empty((0,2))
 ROC_collect_Kee = np.empty((0,2))
 ROC_collect = np.append(ROC_collect, [[0, 1.]], axis=0)
 ROC_collect_Kee = np.append(ROC_collect_Kee, [[0, 1.]], axis=0)
+
+ks_distances = []  
 
 chi2_collect = np.empty((0,3))
 chi2_collect_best = np.empty((0,3))
@@ -434,7 +446,7 @@ for i in range(int(16000)):
 	# New plotting functions 
 	print('Loading and plotting...')
 	vertex_quality_trainer_obj.load_state(tag=load_state)
-	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
+	vertex_quality_trainer_obj.make_plots(filename=f'plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"], iteration=i)
 	# vertex_quality_trainer_obj.make_inverse_plots(filename=f'inverse_plots_{i+1}.pdf', save_dir=f'{test_loc}/plots' , testing_file=["/users/zw21147/ResearchProject/datasets/combinatorial_select_Kuu_renamed_resampled.root"])
  
 	# Formatting for progress ROC
